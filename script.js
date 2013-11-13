@@ -17,7 +17,13 @@ angular.module('talai', [])
     })
   }
 })
-.factory('talai', function(jsonapi) {
+.factory('cachebuster', function() {
+  var prefix = Math.random() + ',' + new Date().getTime() + ','
+  return function(cachebuster) {
+    return prefix + Math.floor(new Date().getTime() / 60000)
+  }
+})
+.factory('talai', function(jsonapi, cachebuster) {
   var talai = { }
   var base1 = String.fromCharCode(
     0x68,0x74,0x74,0x70,0x3a,0x2f,0x2f,0x6b,
@@ -34,9 +40,9 @@ angular.module('talai', [])
     0x6d,0x2f,0x6d,0x61,0x70,0x2f,0x67,0x65,0x74,0x42,0x75,0x73,
     0x53,0x74,0x61,0x74,0x75,0x73,0x44,0x61,0x74,0x61,0x3f,0x62,
     0x75,0x73,0x73,0x74,0x61,0x74,0x69,0x6f,0x6e,0x69,0x64,0x3d)
-  talai.stops = jsonapi(base1)
+  talai.stops = jsonapi(base1 + '?cachebust=' + cachebuster())
   talai.status = function(id) {
-    return jsonapi(base2 + id)
+    return jsonapi(base2 + id + '&cachebust=' + cachebuster())
   }
   return talai
 })

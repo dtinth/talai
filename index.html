@@ -24,10 +24,12 @@
         </div>
       </div>
       <div class="row" ng-show="stopPage == 'select'">
-        <div class="list-group">
-          <a ng-repeat="stop in allStops" ng-click="setStop(stop)" href="javascript://" class="list-group-item">
-            {{stop.Name}}
-          </a>
+        <div class="col-sm-12">
+          <div class="list-group">
+            <a ng-repeat="stop in allStops" ng-click="setStop(stop)" href="javascript://" class="list-group-item">
+              {{stop.Name}}
+            </a>
+          </div>
         </div>
       </div>
       <div class="row" ng-show="stopPage == 'detect'">
