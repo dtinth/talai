@@ -3,7 +3,7 @@
 
 void function() {
 
-var cache = true
+var cache = false
 var colors = { '1': 'danger', '2': 'primary', '3': 'success', '4': 'warning' }
 
 
