@@ -12,29 +12,36 @@
     <button type="button" class="close" ng-click="errorMessage = ''" aria-hidden="true">&times;</button>
     {{errorMessage}}
   </div>
+  <script type="text/ng-template" id="stop.html">
+    <div class="pull-right" ng-bind-html="passes(stop)"></div>
+    {{stop.ID}}. {{stop.Name}}
+  </script>
   <div ng-controller="TalaiController">
     <div ng-controller="StopController" ng-show="page == 'stop'">
-      <h1 class="text-center">Where are you?</h1>
-      <div class="row" ng-show="stopPage == 'index'">
-        <div class="col-sm-6">
-          <button ng-click="detectLocation()" class="btn btn-block btn-lg btn-primary">Detect My Location</button>
-        </div>
-        <div class="col-sm-6">
-          <button ng-click="selectLocation()" class="btn btn-block btn-lg btn-primary">Manually Select</button>
-        </div>
-      </div>
-      <div class="row" ng-show="stopPage == 'select'">
+      <div class="row">
         <div class="col-sm-12">
-          <div class="list-group">
-            <a ng-repeat="stop in allStops" ng-click="setStop(stop)" href="javascript://" class="list-group-item">
-              {{stop.Name}}
-            </a>
+          <div class="panel panel-default">
+            <div class="panel-heading">Where are you?</div>
+            <div class="panel-body">
+              <strong>nearby</strong> (<a href="javascript://" ng-click="detectLocation()">refresh</a>)
+              <div class="list-group">
+                <div ng-if="!nearby || !nearby.length" class="list-group-item text-center">Detecting Location...</div>
+                <a ng-repeat="stop in nearby" href="javascript://"
+                   class="list-group-item"
+                   ng-click="setStop(stop)"
+                   ng-include="'stop.html'">
+                </a>
+              </div>
+              <strong>all stops</strong>
+              <div class="list-group">
+                <a ng-repeat="stop in allStops" href="javascript://"
+                   class="list-group-item"
+                   ng-click="setStop(stop)"
+                   ng-include="'stop.html'">
+                </a>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="row" ng-show="stopPage == 'detect'">
-        <div class="col-sm-12 text-center">
-          <h2>Detecting Location...</h2>
         </div>
       </div>
     </div>
