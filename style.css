@@ -2,3 +2,7 @@
 body {
   padding: 12px;
 }
+.bus-line {
+  width: 32px;
+  text-align: center;
+}

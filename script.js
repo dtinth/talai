@@ -1,8 +1,11 @@
 
 /*global angular, _*/
 
+void function() {
 
-var cache = false
+var cache = true
+var colors = { '1': 'danger', '2': 'primary', '3': 'success', '4': 'warning' }
+
 
 angular.module('talai', [])
 .factory('jsonapi', function($http, $q) {
@@ -25,7 +28,7 @@ angular.module('talai', [])
     return prefix + Math.floor(new Date().getTime() / 60000)
   }
 })
-.factory('talai', function(jsonapi, cachebuster) {
+.factory('talai', function(jsonapi, cachebuster, $sce) {
   var talai = { }
   var base1 = String.fromCharCode(
     0x68,0x74,0x74,0x70,0x3a,0x2f,0x2f,0x6b,0x75,0x62,0x75,0x73,0x2e,0x6e,0x65,
@@ -42,6 +45,31 @@ angular.module('talai', [])
   talai.stops = jsonapi(base1 + '?cachebust=' + cachebuster())
   talai.status = function(id) {
     return jsonapi(base2 + id + '&cachebust=' + cachebuster())
+      .then(function(buses) {
+        var now = new Date()
+        var re = /(\d+):(\d+):(\d+)/
+        var t = function(x) { return x < 10 ? '0' + x : x }
+        buses.forEach(function(bus) {
+          var m = ('' + bus.estimatedtime).match(re)
+          if (m) {
+            var est = new Date(now.getTime() +
+              parseInt(m[1], 10) * 1000 * 60 * 60 +
+              parseInt(m[2], 10) * 1000 * 60 +
+              parseInt(m[3], 10) * 1000)
+            bus.estimatedArrival = est.getHours() + ':' + t(est.getMinutes())
+          } else {
+            bus.estimatedArrival = 'Unknown'
+          }
+        })
+        return buses
+      })
+  }
+  talai.lineClass = function(key) {
+    return colors[key] || 'default'
+  }
+  talai.label = function(key) {
+    var cls = talai.lineClass(key)
+    return $sce.trustAsHtml('<span class="label label-' + cls + '">' + key + '</span>')
   }
   return talai
 })
@@ -77,13 +105,16 @@ angular.module('talai', [])
       $scope.load(id)
     }
   })
+  $scope.lineLabel = function(bus) {
+    return talai.label(bus.buslineid)
+  }
+  $scope.lineClass = function(bus) {
+    return talai.lineClass(bus.buslineid)
+  }
   $scope.load = function(id) {
     $scope.loading = true
     talai.status(id).then(function(buses) {
       $scope.buses = buses
-      if ($scope.buses.length === 0) {
-        $scope.setError('No bus found :(')
-      }
     })
     .finally(function() {
       $scope.loading = false
@@ -95,16 +126,11 @@ angular.module('talai', [])
   }, $scope.err('Cannot get bus stops'))
 })
 .controller('StopController', function($scope, talai, geolocation, $sce) {
-  var colors = { '1': 'danger', '2': 'primary', '3': 'success', '4': 'warning' }
   $scope.passes = function(stop) {
     if (!$scope.stops) return
     var order = $scope.stops.StopOrder
     var pass = function(key) { return _.include(order[key], stop.ID) }
-    var label = function(key) {
-      var cls = colors[key] || 'default'
-      return '<span class="label label-' + cls + '">' + key + '</span>'
-    }
-    var html = _($scope.stops.StopOrder).keys().filter(pass).map(label)
+    var html = _($scope.stops.StopOrder).keys().filter(pass).map(talai.label)
     return $sce.trustAsHtml(html.join(' '))
   }
   $scope.detectLocation = function() {
@@ -123,7 +149,7 @@ angular.module('talai', [])
   $scope.detectLocation()
 })
 
-
+}()
 
 
 

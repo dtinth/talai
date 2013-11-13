@@ -56,13 +56,30 @@
           <h2 class="text-center" ng-show="loading">(Loading)<br><br></h2>
           <div class="row" ng-show="!loading">
             <div class="col-sm-12">
-              <ul class="list-group">
-                <li ng-repeat="bus in buses" class="list-group-item">
-                  <span class="badge">Line {{bus.buslineid}}</span>
-                  <h4 class="list-group-item-heading">{{bus.busname}}</h4>
-                  <p class="list-group-item-text">{{bus.estimatedtime}}</p>
-                </li>
-              </ul>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th colspan="2">Bus Name</th>
+                    <th class="text-right">Est.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-show="!loading && !buses.length">
+                    <td colspan="3" class="text-center">
+                      No buses found :(
+                    </td>
+                  </tr>
+                  <tr ng-repeat="bus in buses">
+                    <td ng-class="'bus-line ' + lineClass(bus)"><span ng-class="'text-' + lineClass(bus)">{{bus.buslineid}}</td>
+                    <td>
+                      {{bus.busname}}
+                    </td>
+                    <td class="text-right">
+                      {{bus.estimatedArrival}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
