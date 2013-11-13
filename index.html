@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="talai">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <title>Talai</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css" media="all">
+</head>
+<body ng-controller="MainController">
+  <div class="alert alert-danger alert-dismissable" ng-show="errorMessage">
+    <button type="button" class="close" ng-click="errorMessage = ''" aria-hidden="true">&times;</button>
+    {{errorMessage}}
+  </div>
+  <div ng-controller="TalaiController">
+    <div ng-controller="StopController" ng-show="page == 'stop'">
+      <h1 class="text-center">Where are you?</h1>
+      <div class="row" ng-show="stopPage == 'index'">
+        <div class="col-sm-6">
+          <button ng-click="detectLocation()" class="btn btn-block btn-lg btn-primary">Detect My Location</button>
+        </div>
+        <div class="col-sm-6">
+          <button ng-click="selectLocation()" class="btn btn-block btn-lg btn-primary">Manually Select</button>
+        </div>
+      </div>
+      <div class="row" ng-show="stopPage == 'select'">
+        <div class="list-group">
+          <a ng-repeat="stop in allStops" ng-click="setStop(stop)" href="javascript://" class="list-group-item">
+            {{stop.Name}}
+          </a>
+        </div>
+      </div>
+      <div class="row" ng-show="stopPage == 'detect'">
+        <div class="col-sm-12 text-center">
+          <h2>Detecting Location...</h2>
+        </div>
+      </div>
+    </div>
+    <div ng-show="page == 'list'">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <a class="badge pull-right" href="javascript://" ng-click="page = 'stop'">Change</a>
+          {{currentStop.ID}}. {{currentStop.Name}}
+          <a class="badge" href="javascript://" ng-click="load(currentStop.ID)">Reload</a>
+        </div>
+        <div class="panel-body">
+          <h2 class="text-center" ng-show="loading">(Loading)<br><br></h2>
+          <div class="row" ng-show="!loading">
+            <div class="col-sm-12">
+              <ul class="list-group">
+                <li ng-repeat="bus in buses" class="list-group-item">
+                  <span class="badge">Line {{bus.buslineid}}</span>
+                  <h4 class="list-group-item-heading">{{bus.busname}}</h4>
+                  <p class="list-group-item-text">{{bus.estimatedtime}}</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer text-muted text-center">
+    <br>
+    Data from <a href="https://www.facebook.com/Kusmartbus">KU Smart Bus</a> application.<br>
+    This application unofficial, and is not affiliated, endorsed, or sponsored by KU or KU Smart Bus Project.<br>
+  </div>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.3.0/lodash.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/2.1.0/es5-shim.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
