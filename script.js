@@ -77,10 +77,14 @@ angular.module('talai', [])
   return {
     get: function(options) {
       var defer = $q.defer()
-      navigator.geolocation.getCurrentPosition(
-        defer.resolve.bind(defer),
-        defer.reject.bind(defer), options)
-      return defer.promise
+      try {
+        navigator.geolocation.getCurrentPosition(
+          defer.resolve.bind(defer),
+          defer.reject.bind(defer), options)
+        return defer.promise
+      } catch (e) {
+        return $q.reject(e)
+      }
     }
   }
 })
