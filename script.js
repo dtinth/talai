@@ -6,7 +6,6 @@ void function() {
 var cache = false
 var colors = { '1': 'danger', '2': 'primary', '3': 'success', '4': 'warning' }
 
-
 angular.module('talai', [])
 .factory('jsonapi', function($http, $q) {
   return function request(url) {
